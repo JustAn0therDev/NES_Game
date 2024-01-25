@@ -30,7 +30,7 @@ RESET:
     ; This would set the region $0 in memory to the value in the A register, which is already 0. 
 
     lda #0                ; A = 0
-    inx                   ; X = 0 because it was already $FF before (when initializng the stack pointer) and it overflowed.
+    inx                   ; X = 0 because it was already $FF before (when initializing the stack pointer) and it overflowed.
 
 MemLoop:
     ; Adding $0 to the mix because we don't have a "sta x" syntax. 
