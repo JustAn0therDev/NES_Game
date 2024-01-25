@@ -25,6 +25,10 @@ RESET:
     ldx #$FF              ; Load the literal $FF hexadecimal value to the X register.
     txs                   ; Initialize the stack pointer at $01FF.
 
+    ; NOTES(Ruan): To be honest, I don't like the way Gustavo fixed this bug, so I'll leave this here:
+    ; Another way of fixing the bug (although it costs one more instruction) is by calling sta $0 after the loop.
+    ; This would set the region $0 in memory to the value in the A register, which is already 0. 
+
     lda #0                ; A = 0
     inx                   ; X = 0 because it was already $FF before (when initializng the stack pointer) and it overflowed.
 
