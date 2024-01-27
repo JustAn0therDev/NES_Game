@@ -15,8 +15,7 @@ Reset:
     adc $80        ; Add to A the value inside RAM address $80
     clc	           ; Clear the carry flag
 	adc $81        ; Add to A the value inside RAM address $81
-    
-	; A should contain (#10 + $A + %1010) = #30 (or $1E in hexadecimal)	
+	; A should contain (#10 + $A + %1010) = #30 (or $1E in hexadecimal)
 
 NMI: ; NMI handler
 	rti ; doesn't do anything
