@@ -5,13 +5,10 @@
 .segment "CODE" ; Define a segment called "CODE" for the PRG-ROM at $8000
 .org $8000
 
-Reset:      ; TODO:
-            ; Load the A register with the literal hexadecimal value $82
-            ; Load the X register with the literal decimal value 82
-            ; Load the Y register with the value that is inside memory position $82
-	lda #$82
-	ldx #82
-	ldy $82
+Reset:
+	lda #$82 ; Load the A register with the literal hexadecimal value $82
+	ldx #82  ; Load the X register with the literal decimal value 82
+	ldy $82  ; Load the Y register with the value that is inside memory position $82
 
 NMI: ; NMI handler
 	rti ; doesn't do anything

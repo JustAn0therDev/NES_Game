@@ -6,10 +6,15 @@
 .org $8000
 
 Reset:
-	lda #$A        ; Load the A register with the hexadecimal value $A
-	ldx #%11111111 ; Load the X register with the binary value %11111111
-	sta $80        ; Store the value in the A register into memory address $80
-	stx $81        ; Store the value in the X register into memory address $81
+	lda #15 ; Load the A register with the literal decimal value 15
+	tax     ; Transfer the value from A to X
+	tay     ; Transfer the value from A to Y
+	txa     ; Transfer the value from X to A
+	tya     ; Transfer the value from Y to A
+
+	ldx #6  ; Load X with the decimal value 6
+	txa     ; Transfer the value from X to A
+	tay     ; So we can finally transfer the value from X to Y, using A (since we can't transfer from X to Y directly)
 
 NMI: ; NMI handler
 	rti ; doesn't do anything
