@@ -18,7 +18,9 @@ Loop:
 	; since I can't overflow the value to reach 0 again. This way, it only takes a 
 	; single instruction before storing the value #0 in the memory position.
 	; Any other way of changing the value in register A would take at least 2 instructions
-	; (like "sec, sbc #1", for example)
+	; (like "sec, sbc #1", for example). I researched ways of doing it with other instructions,
+	; but for that to happen, we would have to always use the A register (like using BVS or BVC), 
+	; which would take more instructions and, therefore, more cycles.
 	
 	lda #0              ; Load the value 0 into register A
 	sta $80             ; Store the value in A inside memory position $80
