@@ -16,6 +16,8 @@ Reset:
     clc	           ; Clear the carry flag
 	adc $81        ; Add to A the value inside RAM address $81
 	; A should contain (#10 + $A + %1010) = #30 (or $1E in hexadecimal)
+	sta $82        ; Store the value in the A register into (zero page) memory address $82
+
 
 NMI: ; NMI handler
 	rti ; doesn't do anything

@@ -12,7 +12,7 @@ Loop:
 	tya                 ; Transfer Y to A
 	sta $80,Y           ; Store the value in A inside memory position $80+Y
     dey                 ; Decrement Y
-	bne Loop            ; Branch back to "Loop" until we are done
+	bpl Loop            ; Branch back to "Loop" until we are done
 
 	; NOTES(Ruan): I'm not sure if there is a better way to do this,
 	; since I can't overflow the value to reach 0 again. This way, it only takes a 
@@ -22,9 +22,9 @@ Loop:
 	; but for that to happen, we would have to always use the A register (like using BVS or BVC), 
 	; which would take more instructions and, therefore, more cycles.
 	
-	lda #0              ; Load the value 0 into register A
-	sta $80             ; Store the value in A inside memory position $80
-
+	; Notes(Ruan, a few days later): Looking at the solution, the "bpl" instruction
+	; does exactly what I was looking for. I just didn't know it did was it does :)
+	
 NMI: ; NMI handler
 	rti ; doesn't do anything
 
