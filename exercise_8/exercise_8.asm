@@ -13,6 +13,7 @@ Loop:
 	sta $80,Y           ; Store the value in A inside memory position $80+Y
     dey                 ; Decrement Y
 	bpl Loop            ; Branch back to "Loop" until we are done
+	; bne Loop          ; First solution: I used bne before and store the value 0 inside memory position $80.
 
 	; NOTES(Ruan): I'm not sure if there is a better way to do this,
 	; since I can't overflow the value to reach 0 again. This way, it only takes a 
