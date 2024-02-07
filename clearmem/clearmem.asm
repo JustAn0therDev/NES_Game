@@ -37,7 +37,7 @@ ClearRAM:
     sta $0600,x           ; Store the value of A (zero) into $0600 + x (x can go from $0 to $FF)
     sta $0700,x           ; Store the value of A (zero) into $0700 + x (x can go from $0 to $FF)
     inx                   ; X--
-    bne ClearRAM          ; If X is not zero, we loop back to the MemLoop label.
+    bne ClearRAM          ; If X is not zero, we loop back to the ClearRAM label.
 
 NMI:
     rti ; Return, don't do anything
