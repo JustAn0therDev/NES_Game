@@ -32,6 +32,11 @@ RESET:
 
 	lda #$0               ; A = 0
 	inx                   ; X = 0 because it was already $FF before (when initializing the stack pointer) and it overflowed.
+	
+	lda #%00011110        ; Store the value 00011110 into the A register.
+	sta PPU_MASK          ; Store the value in the A register into the PPU_MASK register located at $2001
+	
+	ldy #$00			  ; Store the value #$0000 into the Y register.
 
 MemLoop:
 	sta $0,x              ; Store the value of A (zero) into $0+X
@@ -39,17 +44,17 @@ MemLoop:
 	bne MemLoop           ; If X is not zero, we loop back to the MemLoop label.
 
 Main:
-	ldx #$3F            	; Store the value #$3F00 into the X register.
-	stx PPU_ADDR            ; Store the first byte (hi-byte) into the PPU_ADDR register located at $2006
+	ldx #$3F              ; Store the value #$3F00 into the X register.
+	stx PPU_ADDR          ; Store the first byte (hi-byte) into the PPU_ADDR register located at $2006
 
-	ldx #$00                ; Store the value #$00 into the X register.
-	stx PPU_ADDR            ; Store the second byte (lo-byte) into the PPU_ADDR register located at $2006
+	ldx #$00              ; Store the value #$00 into the X register.
+	stx PPU_ADDR          ; Store the second byte (lo-byte) into the PPU_ADDR register located at $2006
 	
-	lda #$2A				; Store the value #$002A into the A register.
-	sta PPU_DATA            ; Store the value in the A register into the PPU_DATA register located at $2007
+	sty PPU_DATA          ; Store the value in the A register into the PPU_DATA register located at $2007
 	
-	lda #%00011110          ; Store the value 00011110 into the A register.
-	sta PPU_MASK            ; Store the value in the A register into the PPU_MASK register located at $2001
+	iny                   ; Increment the value in the Y register.
+						  ; The value will always overflow once it reaches #$FF, and the background should be always change colors, like a TV screen static.
+	jmp Main              ; Go back to main so we have an infinite loop.
 
 NMI:
 	rti ; Return, don't do anything
