@@ -25,8 +25,8 @@ RESET:
     ldx #$FF              ; Load the literal $FF hexadecimal value to the X register.
     txs                   ; Initialize the stack pointer at $01FF.
 
-    lda #$0                ; A = 0
-	inx                   ; X = 0 because it was already $FF before (when initializing the stack pointer) and it overflowed.
+    lda #$0               ; A = 0
+    inx                   ; X = 0 because it was already $FF before (when initializing the stack pointer) and it overflowed.
 MemLoop:
     sta $0,x              ; Store the value of A (zero) into $0+X
     dex                   ; X--
