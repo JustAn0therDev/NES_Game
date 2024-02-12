@@ -51,7 +51,7 @@ PaintBlack:
 	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
 
 	lda #$00              ; Load the value #$00 into the A register.
-	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color black.
+	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color black
 
 
 PaintWhite:
@@ -62,7 +62,7 @@ PaintWhite:
 	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
 
 	lda #$FF              ; Load the value #$00 into the A register.
-	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color white.
+	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color white
 
 	jmp PaintBlack        ; Jump to the PaintBlack subroutine again, making it loop
 

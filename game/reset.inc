@@ -1,9 +1,8 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PRG-ROM code located at $8000
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.segment "CODE"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Macro to initialize the NES by desabling render and clearing RAM values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-RESET:
+.macro INIT_NES
     sei                   ; Disable all IRQ interrupts.
     cld                   ; Clears the decimal-mode (even though the NES's Ricoh 6502 does not have it.)
     ldx #$FF              ; Load the literal $FF hexadecimal value to the X register.
@@ -37,33 +36,5 @@ ClearRAM:
 Wait2ndVBlank:            ; Wait for the second VBlank from the PPU
     bit PPU_STATUS        ; Perform a bit-wise check with the PPU_STATUS port
     bpl Wait2ndVBlank     ; Loop until bit-7 (sign bit) is 1 (inside VBlank)
-	
-Main:
-	ldx #$3F              ; Store the value #$3F into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the hi-byte
-	
-	ldx #$00              ; Store the value #$00 into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
-	
-	ldx #$2A              ; Load the value #$2A into the X register.
-	stx PPU_DATA          ; Load the value in X into PPU_DATA, setting the value at #$3F00 to 2A 
-						  ; (first byte of the 16 bytes for the background color palette)
-	
-	ldx #%00011110        ; Load the value #%00011110 into X.
-	stx PPU_MASK          ; Load the value in X into the PPU_MASK register, allowing the background to be rendered.
 
-NMI:
-    rti ; Return, don't do anything
-
-IRQ:
-    rti ; Return, don't do anything
-
-; The vectors are addresses that point to code whenever a specific signal is sent. 
-; Basically a callback
-.segment "VECTORS" 
-; Address of the NMI handler
-; Address of the RESET handler
-; Address of the IRQ handler
-.word NMI
-.word RESET
-.word IRQ
+.endmacro
