@@ -43,18 +43,28 @@ MemLoop:
 	dex                   ; X--
 	bne MemLoop           ; If X is not zero, we loop back to the MemLoop label.
 
-Main:
-	ldx #$3F              ; Store the value #$3F00 into the X register.
-	stx PPU_ADDR          ; Store the first byte (hi-byte) into the PPU_ADDR register located at $2006
-
+PaintBlack:
+	ldx #$3F              ; Store the value #$3F into the X register.
+	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the hi-byte
+	
 	ldx #$00              ; Store the value #$00 into the X register.
-	stx PPU_ADDR          ; Store the second byte (lo-byte) into the PPU_ADDR register located at $2006
+	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
+
+	lda #$00              ; Load the value #$00 into the A register.
+	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color black.
+
+
+PaintWhite:
+	ldx #$3F              ; Store the value #$3F into the X register.
+	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the hi-byte
 	
-	sty PPU_DATA          ; Store the value in the A register into the PPU_DATA register located at $2007
-	
-	iny                   ; Increment the value in the Y register.
-						  ; The value will always overflow once it reaches #$FF, and the background should be always change colors, like a TV screen static.
-	jmp Main              ; Go back to main so we have an infinite loop.
+	ldx #$00              ; Store the value #$00 into the X register.
+	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
+
+	lda #$FF              ; Load the value #$00 into the A register.
+	sta PPU_DATA          ; Set the PPU_DATA with the value in the A register. In this case, the color white.
+
+	jmp PaintBlack        ; Jump to the PaintBlack subroutine again, making it loop
 
 NMI:
 	rti ; Return, don't do anything
