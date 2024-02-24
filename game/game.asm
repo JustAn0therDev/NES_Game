@@ -36,9 +36,6 @@ Main:
 		
 	ldx #%00011110        ; Load the value #%00011110 into X.
 	stx PPU_MASK          ; Load the value in X into the PPU_MASK register, allowing the background to be rendered.
-	
-	ldy #0
-	
 NMI:
     rti ; Return, don't do anything
 
