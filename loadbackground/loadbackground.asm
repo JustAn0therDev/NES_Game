@@ -3,6 +3,10 @@
 .include "reset.inc"
 .include "utils.inc"
 
+.segment "ZEROPAGE"
+Frame: .res 1            ; Reserve 1 byte for the frame counter.
+Clock60: .res 1          ; Reserve 1 byte for the clock counter (seconds counter).
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PRG-ROM code located at $8000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,6 +54,10 @@ LoopAttribute:
 Reset:
 	INIT_NES
 
+	lda #0
+	sta Frame
+	sta Clock60
+	
 Main:
 	PPU_SETADDR $3F00
 	jsr LoopPalette       ; Jump to the subroutine that fills the color palette in the PPU
@@ -69,11 +77,21 @@ EnablePPURendering:
 	sta PPU_CTRL
 	ldx #%00011110        ; Load the value #%00011110 into X.
 	stx PPU_MASK          ; Load the value in X into the PPU_MASK register, allowing the background to be rendered.
-
+	
 LoopForever:
 	jmp LoopForever       ; Force an infinite execution loop.
+
+IncrementClockCounterAndResetFrameCount:
+	inc Clock60           ; If this label got called, it means that one second has passed (60 frames, 60hz refresh rate for NTSC televisions)
+	lda #0                ; Load the A register with 0
+	sta Frame             ; It also means that the Frame counter has reached 60. Now we clean it and count again.
+	
 NMI:
-    rti ; Return, don't do anything
+	inc Frame                                          ; Increment the frame every time a V-blank happens
+	lda Frame                                          ; Load the value of Frame inside the A register.
+	cmp #60                                            ; Compare it to 60
+	beq IncrementClockCounterAndResetFrameCount        ; If it equals 60, we can increment the clock counter and clear it.
+    rti                                                ; Return, don't do anything
 
 IRQ:
 
