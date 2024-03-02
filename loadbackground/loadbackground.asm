@@ -1,6 +1,7 @@
 .include "consts.inc"
 .include "header.inc"
 .include "reset.inc"
+.include "utils.inc"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PRG-ROM code located at $8000
@@ -50,29 +51,17 @@ Reset:
 	INIT_NES
 
 Main:
-	bit PPU_STATUS        ; Read PPU_STATUS to reset the PPU_ADDR latch.
-	ldx #$3F              ; Store the value #$3F into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the hi-byte
-	ldx #$00              ; Store the value #$00 into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
+	PPU_SETADDR $3F00
 	jsr LoopPalette       ; Jump to the subroutine that fills the color palette in the PPU
 
 	; Set PPU address to $2000, and load the tiles of the background
 
-	bit PPU_STATUS        ; Read PPU_STATUS to reset the PPU_ADDR latch.
-	ldx #$20              ; Store the value #$20 into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the hi-byte
-	ldx #$00              ; Store the value #$00 into the X register.
-	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
+	PPU_SETADDR $2000
 	jsr LoopBackground    ; Jump to the subroutine that loads the background data into the PPU.
 
 	; Set PPU address to $23C0, and load the attributes of the background.
 
-	bit PPU_STATUS        ; Read PPU_STATUS to reset the PPU_ADDR latch.
-	ldx #$23              ; Store the value #$20 into the X register.
-	stx PPU_ADDR          ; Load the hi-byte with the value from the X register.
-	ldx #$C0              ; Store the value #$C0 into the X register.
-	stx PPU_ADDR          ; Load the lo-byte with the value from the X register.
+	PPU_SETADDR $23C0
 	jsr LoopAttribute     ; Jump to the subroutine that loads the background color data into the PPU.
 
 EnablePPURendering:
