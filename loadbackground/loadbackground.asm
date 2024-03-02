@@ -31,6 +31,18 @@ LoopBackground:
 	rts
 .endproc
 
+;; Load attribute bytes
+.proc LoopAttribute
+	ldy #0
+LoopAttribute:
+	lda AttributeData, y        ; Load the A register with the memory location of AttributeData and the value in the Y register.
+	sta PPU_DATA                ; Set the value in the A register to the memory location of PPU_DATA (where we want to load the attribute values.)
+	iny                         ; Increment Y
+	cpy #16                     ; Compare the value in the Y register to #16.
+	bne LoopAttribute           ; If it's not equal, loop back to the LoopAttribute label.
+	rts
+.endproc
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reset handler (called when the NES resets or powers on)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -54,6 +66,15 @@ Main:
 	stx PPU_ADDR          ; Load the value in X into PPU_ADDR register, setting the lo-byte
 	jsr LoopBackground    ; Jump to the subroutine that loads the background data into the PPU.
 
+	; Set PPU address to $23C0, and load the attributes of the background.
+
+	bit PPU_STATUS        ; Read PPU_STATUS to reset the PPU_ADDR latch.
+	ldx #$23              ; Store the value #$20 into the X register.
+	stx PPU_ADDR          ; Load the hi-byte with the value from the X register.
+	ldx #$C0              ; Store the value #$C0 into the X register.
+	stx PPU_ADDR          ; Load the lo-byte with the value from the X register.
+	jsr LoopAttribute     ; Jump to the subroutine that loads the background color data into the PPU.
+
 EnablePPURendering:
 	lda #%10010000        ; Enable NMI and set background to use the 2nd pattern table (at $1000)
 	sta PPU_CTRL
@@ -66,11 +87,12 @@ NMI:
     rti ; Return, don't do anything
 
 IRQ:
+
     rti ; Return, don't do anything
 
 PaletteData:
-.byte $0F, $2A, $0C, $3A, $0F, $2A, $0C, $3A, $0F, $2A, $0C, $3A, $0F, $2A, $0C, $3A ; Background
-.byte $0F, $10, $00, $26, $0F, $10, $00, $26, $0F, $10, $00, $26, $0F, $10, $00, $26 ; Sprite
+.byte $22,$29,$1A,$0F, $22,$36,$17,$0F, $22,$30,$21,$0F, $22,$27,$17,$0F ; Background palette
+.byte $22,$16,$27,$18, $22,$1A,$30,$27, $22,$16,$30,$27, $22,$0F,$36,$17 ; Sprite palette
 
 BackgroundData:
 .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$36,$37,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
@@ -81,6 +103,10 @@ BackgroundData:
 .byte $47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47
 .byte $47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47,$47
 .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+AttributeData:
+.byte %00000000, %00000000, %10101010, %00000000, %11110000, %00000000, %00000000, %00000000
+.byte %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
 
 ; Here we add the CHR-ROM data, included from an external .CHR file.
 .segment "CHARS"
