@@ -6,6 +6,8 @@
 .segment "ZEROPAGE"
 Frame: .res 1            ; Reserve 1 byte for the frame counter.
 Clock60: .res 1          ; Reserve 1 byte for the clock counter (seconds counter).
+BgPtr: .res 2            ; Reserve 2 bytes (16 bits) to store a pointer to the background address.
+						 ; (we store first the lo-byte and then the hi-byte, due to endianess. This has absolutely nothing to do with the PPU registers.)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PRG-ROM code located at $8000
@@ -28,7 +30,7 @@ LoopPalette:
 .proc LoopBackground
 	ldy #0
 LoopBackground:
-	lda BackgroundData, y       ; Load the A register with the value in the exact memory region where we keep the background data bytes.
+	lda (BgPtr), y 				; Load the A register with the value in the exact memory region where we keep the background data bytes.
 	sta PPU_DATA                ; Load the PPU_DATA register with the value that is inside the A register.
 	iny                         ; Increment Y
 	cpy #$FF                    ; Compare it to $FF, it being past the last byte we want to access before reaching the end of the background.
@@ -63,6 +65,11 @@ Main:
 	jsr LoopPalette       ; Jump to the subroutine that fills the color palette in the PPU
 
 	; Set PPU address to $2000, and load the tiles of the background
+	
+	lda #<BackgroundData  ; Fetch the lo-byte of the BackgroundData address
+	sta BgPtr
+	lda #>BackgroundData  ; Fetch the hi-byte of the BackgroundData address
+	sta BgPtr+1
 
 	PPU_SETADDR $2000
 	jsr LoopBackground    ; Jump to the subroutine that loads the background data into the PPU.
