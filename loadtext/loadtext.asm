@@ -65,16 +65,10 @@ IncreaseHiByte:
     ;; TODO:
     ;; Loop all characters from ROM and load/display the text in the nametable.
     ;; Bonus points if your code manages to display an empty tile for [space].
-	lda #$24
+	lda #$0
 	ldy #$0
-	ldx #$0
-ReachFirstDrawableLine:
-	sta PPU_DATA
-	inx
-	cpx #43
-	bne ReachFirstDrawableLine
+	PPU_SETADDR $21CB        ; Exactly in the middle of the screen, by the size of the text.
 LoadText:
-	lda #$00
 	lda TextMessage,y        ; Load the memory position in the "TextMessage" label with an offset by the value in the Y register
 	cmp #32
 	beq PrintEmptyTile
